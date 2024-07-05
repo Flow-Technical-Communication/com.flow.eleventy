@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="dita-ot/plugin.rnc" type="application/relax-ng-compact-syntax"?>
+<plugin id="com.flow.eleventy">
+	<feature extension="package.version" value="4.2.0"></feature>
+	<require plugin="org.dita.html5"/>
+	<transtype name="eleventy"></transtype>
+	<feature extension="ant.import" file="build_eleventy.xml"></feature>
+	<feature extension="dita.conductor.html5.param" file="params.xml"></feature>
+</plugin>

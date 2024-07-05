@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <target name="eleventy.init">
+    <property
+      name="args.xsl"
+      location="${dita.plugin.com.flow.eleventy.dir}/xsl/dita2html.xsl"
+    />
+    <property name="args.html5.toc" value="toc"/>
+    <property name="nav-toc" value="partial"/>
+  </target>
+
+  <target
+  	name="dita2eleventy"
+  	depends="eleventy.init,
+             html5.init,
+             build-init,
+             preprocess2,
+             html5.topic,
+             html5.map"
+  />
+</project>
