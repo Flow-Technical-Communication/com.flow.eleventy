@@ -8,11 +8,11 @@
 	<xsl:param name="layout" select="'base'" as="xs:string"></xsl:param>
 
 	<xsl:template match="/">
-		<xsl:apply-templates select="*" mode="jekyll-front-matter"></xsl:apply-templates>
+		<xsl:apply-templates select="*" mode="front-matter"></xsl:apply-templates>
 		<xsl:apply-templates select="*" mode="chapterBody"></xsl:apply-templates>
 	</xsl:template>
 
-	<xsl:template match="node()" mode="jekyll-front-matter">
+	<xsl:template match="node()" mode="front-matter">
 		<xsl:text>---&#xA;</xsl:text>
 		<xsl:text># Generated from DITA source&#xA;</xsl:text>
 		<xsl:call-template name="yaml-string">
@@ -95,14 +95,15 @@
 		<xsl:text>---&#xA;&#xA;</xsl:text>
 	</xsl:template>
 
-	<xsl:template name="yaml-string">
-		<xsl:param name="key" as="xs:string"></xsl:param>
-		<xsl:param name="value" as="xs:string"></xsl:param>
-		<xsl:value-of select="$key"></xsl:value-of>
-		<xsl:text>: '</xsl:text>
-		<xsl:value-of select="$value"></xsl:value-of>
-		<xsl:text>'&#xA;</xsl:text>
-	</xsl:template>
+<xsl:template name="yaml-string">
+  <xsl:param name="key" as="xs:string"/>
+  <xsl:param name="value" as="xs:string"/>
+  <xsl:value-of select="$key"/>
+  <xsl:text>: '</xsl:text>
+  <xsl:value-of select="replace($value, '''', '''''')"/>
+  <xsl:text>'&#xA;</xsl:text>
+</xsl:template>
+
 
 
 	<xsl:template name="yaml-boolean">
@@ -114,7 +115,7 @@
 		<xsl:text>&#xA;</xsl:text>
 	</xsl:template>
 
-	<!-- Jekyll’s base layout adds the <body> element, so skip that (and related ID/attributes/outputclass/aname) here -->
+	<!-- Base layout adds the <body> element, so skip that (and related ID/attributes/outputclass/aname) here -->
 	<xsl:template match="*" mode="chapterBody">
 		<!--
     <body>
