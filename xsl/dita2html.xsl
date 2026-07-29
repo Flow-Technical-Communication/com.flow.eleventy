@@ -47,27 +47,27 @@
 			</xsl:call-template>
 		</xsl:if>
 		
-		<xsl:variable name="metadata" as="element()*" select="//category[normalize-space()]"></xsl:variable>
+		<xsl:variable name="metadata" as="xs:string*" select="distinct-values(//category[normalize-space()] ! normalize-space(.))"></xsl:variable>
 		<xsl:if test="exists($metadata)">
 			<xsl:call-template name="yaml-string">
 				<xsl:with-param name="key" select="'category'"></xsl:with-param>
-				<xsl:with-param name="value" select="string-join($metadata ! normalize-space(.), ', ')"></xsl:with-param>
+				<xsl:with-param name="value" select="string-join($metadata, ', ')"></xsl:with-param>
 			</xsl:call-template>
 		</xsl:if>
 		
-		<xsl:variable name="keywords" as="element()*" select="//keyword[normalize-space()]"></xsl:variable>
+		<xsl:variable name="keywords" as="xs:string*" select="distinct-values(//keyword[normalize-space()] ! normalize-space(.))"></xsl:variable>
 		<xsl:if test="exists($keywords)">
 			<xsl:call-template name="yaml-string">
 				<xsl:with-param name="key" select="'keywords'"></xsl:with-param>
-				<xsl:with-param name="value" select="string-join($keywords ! normalize-space(.), ', ')"></xsl:with-param>
+				<xsl:with-param name="value" select="string-join($keywords, ', ')"></xsl:with-param>
 			</xsl:call-template>
 		</xsl:if>
 		
 		<xsl:variable name="audience-values" as="xs:string*" select="
-			(
+			distinct-values((
 			//audience[normalize-space()] ! normalize-space(.),
 			//*[contains(@class, ' topic/othermeta ')][@name = 'audience'][normalize-space(@content)] ! string(@content)
-			)"></xsl:variable>
+			))"></xsl:variable>
 		<xsl:if test="exists($audience-values)">
 			<xsl:choose>
 				<xsl:when test="count($audience-values) = 1">
@@ -88,17 +88,18 @@
 		<xsl:for-each-group
 			select="//*[contains(@class, ' topic/othermeta ')][@name][@content][normalize-space(@content)][not(@name = 'audience')]"
 			group-by="@name">
+			<xsl:variable name="group-values" as="xs:string*" select="distinct-values(current-group()/string(@content))"></xsl:variable>
 			<xsl:choose>
-				<xsl:when test="count(current-group()) = 1">
+				<xsl:when test="count($group-values) = 1">
 					<xsl:call-template name="yaml-string">
 						<xsl:with-param name="key" select="string(current-grouping-key())"></xsl:with-param>
-						<xsl:with-param name="value" select="string(current-group()[1]/@content)"></xsl:with-param>
+						<xsl:with-param name="value" select="$group-values[1]"></xsl:with-param>
 					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:call-template name="yaml-string-list">
 						<xsl:with-param name="key" select="string(current-grouping-key())"></xsl:with-param>
-						<xsl:with-param name="values" select="current-group()/string(@content)"></xsl:with-param>
+						<xsl:with-param name="values" select="$group-values"></xsl:with-param>
 					</xsl:call-template>
 				</xsl:otherwise>
 			</xsl:choose>
